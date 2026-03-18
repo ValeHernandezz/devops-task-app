@@ -1,0 +1,32 @@
+services:
+  mongo:
+    image: mongo:6
+    container_name: mongo-dev
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: supersegura
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - devops-net
+
+  backend:
+    build: ./backend
+    container_name: backend-dev
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: 3000
+      MONGO_URI: mongodb://admin:supersegura@mongo:27017/devopsdb?authSource=admin
+    depends_on:
+      - mongo
+    networks:
+      - devops-net
+
+volumes:
+  mongo-data:
+
+networks:
+  devops-net:
